@@ -22,7 +22,6 @@
             android:id="@+id/rdBtnList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:checked="true"
             android:text="@string/rd_btn_list_txt_value" />
 
         <RadioButton

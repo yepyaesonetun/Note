@@ -68,6 +68,11 @@ class MainActivity : AppCompatActivity() {
                 mTheDB.noteDao().insertNote(note)
                 dialogInterface.cancel()
 
+                // refresh recyclerView
+                notes = mTheDB.noteDao().getAllNotes()
+                adapter.noteList = notes
+                adapter.notifyDataSetChanged()
+
             }
             .setNegativeButton("Cancel") { dialogInterface, _ ->
                 dialogInterface.cancel()
@@ -115,10 +120,14 @@ class MainActivity : AppCompatActivity() {
         alertDialog.setTitle("Are You Sure?")
         alertDialog.setMessage("Delete All Notes! This cannot be undone.")
         alertDialog.setPositiveButton("Delete All") { dialogInterface, _ ->
-
             mTheDB.noteDao().deleteAll()
-            dialogInterface.cancel()
 
+            // refresh recyclerView
+            notes = mTheDB.noteDao().getAllNotes()
+            adapter.noteList = notes
+            adapter.notifyDataSetChanged()
+
+            dialogInterface.cancel()
         }.setNegativeButton("Cancel") { dialogInterface, _ ->
             dialogInterface.cancel()
         }

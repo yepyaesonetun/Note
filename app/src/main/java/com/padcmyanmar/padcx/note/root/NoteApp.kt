@@ -2,6 +2,7 @@ package com.padcmyanmar.padcx.note.root
 
 import android.app.Application
 import android.content.Context
+import com.padcmyanmar.padcx.note.persistence.db.NoteDB
 
 /**
  * Created by Ye Pyae Sone Tun
@@ -17,6 +18,7 @@ class NoteApp : Application() {
 
     override fun onCreate() {
         instance = this
+
         super.onCreate()
     }
 }

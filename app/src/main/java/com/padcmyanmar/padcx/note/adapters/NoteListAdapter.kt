@@ -13,7 +13,9 @@ import kotlinx.android.synthetic.main.item_note.view.*
  * on 2020-02-09.
  */
 
-class NoteListAdapter(var noteList: List<NoteVO>) : RecyclerView.Adapter<NoteViewHolder>() {
+class NoteListAdapter : RecyclerView.Adapter<NoteViewHolder>() {
+
+    private var noteList: List<NoteVO> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_note, parent, false)
@@ -28,5 +30,10 @@ class NoteListAdapter(var noteList: List<NoteVO>) : RecyclerView.Adapter<NoteVie
         val note = noteList[position]
         holder.itemView.tvNoteContent.text = note.noteContent
         holder.itemView.tvNoteRecordedDate.text = note.createdDate.toString()
+    }
+
+    fun setNotes(notes: List<NoteVO>) {
+        noteList = notes
+        notifyDataSetChanged()
     }
 }

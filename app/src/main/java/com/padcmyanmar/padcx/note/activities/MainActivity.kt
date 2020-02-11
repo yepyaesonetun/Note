@@ -2,12 +2,12 @@ package com.padcmyanmar.padcx.note.activities
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textfield.TextInputEditText
@@ -22,13 +22,12 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var displayStyle: String
+    private lateinit var mDisplayStyle: String
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var gridLayoutManager: GridLayoutManager
     private lateinit var mTheDB: NoteDB
 
-    private lateinit var adapter: NoteListAdapter
-    private lateinit var notes: List<NoteVO>
+    private lateinit var mAdapter: NoteListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,10 +38,14 @@ class MainActivity : AppCompatActivity() {
         gridLayoutManager = GridLayoutManager(this, 2)
 
         mTheDB = NoteDB.getDBInstance(this)
-        notes = mTheDB.noteDao().getAllNotes()
 
-        adapter = NoteListAdapter(notes)
-        rvNoteList.adapter = adapter
+        mAdapter = NoteListAdapter()
+
+        // live data - refresh UI
+        mTheDB.noteDao().getAllNotes().observe(this,
+            Observer { mAdapter.setNotes(it) })
+
+        rvNoteList.adapter = mAdapter
 
         fab.setOnClickListener {
             showAddNoteDialog()
@@ -68,11 +71,6 @@ class MainActivity : AppCompatActivity() {
                 mTheDB.noteDao().insertNote(note)
                 dialogInterface.cancel()
 
-                // refresh recyclerView
-                notes = mTheDB.noteDao().getAllNotes()
-                adapter.noteList = notes
-                adapter.notifyDataSetChanged()
-
             }
             .setNegativeButton("Cancel") { dialogInterface, _ ->
                 dialogInterface.cancel()
@@ -83,16 +81,16 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
 
-        displayStyle = NotePrefs.getNoteDisplayStyle()!!
+        mDisplayStyle = NotePrefs.getNoteDisplayStyle()!!
 
-        when (displayStyle) {
+        when (mDisplayStyle) {
             resources.getString(R.string.rd_btn_list_txt_value) ->
                 rvNoteList.layoutManager = linearLayoutManager
             resources.getString(R.string.rd_btn_grid_txt_value) ->
                 rvNoteList.layoutManager = gridLayoutManager
         }
 
-        adapter.notifyDataSetChanged()
+        mAdapter.notifyDataSetChanged()
         super.onResume()
     }
 
@@ -120,14 +118,10 @@ class MainActivity : AppCompatActivity() {
         alertDialog.setTitle("Are You Sure?")
         alertDialog.setMessage("Delete All Notes! This cannot be undone.")
         alertDialog.setPositiveButton("Delete All") { dialogInterface, _ ->
+
             mTheDB.noteDao().deleteAll()
-
-            // refresh recyclerView
-            notes = mTheDB.noteDao().getAllNotes()
-            adapter.noteList = notes
-            adapter.notifyDataSetChanged()
-
             dialogInterface.cancel()
+
         }.setNegativeButton("Cancel") { dialogInterface, _ ->
             dialogInterface.cancel()
         }

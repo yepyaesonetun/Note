@@ -1,5 +1,6 @@
 package com.padcmyanmar.padcx.note.persistence.daos
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -15,7 +16,7 @@ import java.util.*
 @Dao
 interface NoteDao {
     @Query("SELECT * FROM p_note")
-    fun getAllNotes(): List<NoteVO>
+    fun getAllNotes(): LiveData<List<NoteVO>>
 
     @Query("DELETE FROM p_note")
     fun deleteAll()

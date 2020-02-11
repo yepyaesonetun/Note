@@ -8,11 +8,13 @@ import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textfield.TextInputEditText
 import com.padcmyanmar.padcx.note.R
 import com.padcmyanmar.padcx.note.adapters.NoteListAdapter
+import com.padcmyanmar.padcx.note.data.models.NoteViewModel
 import com.padcmyanmar.padcx.note.data.vos.NoteVO
 import com.padcmyanmar.padcx.note.persistence.db.NoteDB
 import com.padcmyanmar.padcx.note.persistence.sharedPrefs.NotePrefs
@@ -28,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mTheDB: NoteDB
 
     private lateinit var mAdapter: NoteListAdapter
+    private lateinit var noteViewModel: NoteViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,8 +44,13 @@ class MainActivity : AppCompatActivity() {
 
         mAdapter = NoteListAdapter()
 
-        // live data - refresh UI
-        mTheDB.noteDao().getAllNotes().observe(this,
+        // live data
+//        mTheDB.noteDao().getAllNotes().observe(this,
+//            Observer { mAdapter.setNotes(it) })
+
+//         with viewModel
+        noteViewModel = ViewModelProviders.of(this).get(NoteViewModel::class.java)
+        noteViewModel.allNotes.observe(this,
             Observer { mAdapter.setNotes(it) })
 
         rvNoteList.adapter = mAdapter
